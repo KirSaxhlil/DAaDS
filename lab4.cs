@@ -30,11 +30,11 @@ namespace ConsoleApp1
             {
                 for(int j = x+1; j < 30; j++)
                 {
-                    if (array[j] > 0) x = j;
+                    if (array[j] > 0) { x = j; break;}
                 }
                 for(int j = y-1; j > 0; j--)
                 {
-                    if (array[j] > 0) y = j;
+                    if (array[j] > 0) { y = j; break; }
                 }
                 t = array[x];
                 array[x] = array[y];
