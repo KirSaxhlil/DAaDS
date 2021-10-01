@@ -26,6 +26,8 @@ namespace ConsoleApp1
                 if (x <= 0)
                 {
                     Console.WriteLine("| {0} | Вычисление невозможно.", n);
+                    n++;
+                    x += dx;
                     continue;
                 }
                 y = b * x * x - a * Math.Log10(x);
@@ -43,7 +45,7 @@ namespace ConsoleApp1
                     }
                     if (y <= y_min)
                     {
-                        y = y_min;
+                        y_min = y;
                         n_min = n;
                     }
                 }
