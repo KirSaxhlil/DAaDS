@@ -1,0 +1,47 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.IO;
+
+namespace ConsoleApp1
+{
+    class Program
+    {
+        static int DivideString(String line, char symb)
+        {
+            return line.IndexOf(symb);
+        }
+
+        static int DivideStringReg(String line, char symb)
+        {
+            Regex reg = new Regex(@""+symb);
+            return reg.Match(line).Index;
+        }
+
+        static void DivideStringRegOutput(String[] line, char symb)
+        {
+            Regex reg = new Regex(@"" + symb);
+            FileInfo file = new FileInfo("lab6r.s2");
+            StreamWriter output = file.AppendText();
+            for (int j = 0; j < line.Length; j++)
+            {
+                int i = reg.Match(line[j]).Index;
+            }
+
+        }
+        static void Main(string[] args)
+        {
+            string line;
+            char a;
+            line = Console.ReadLine();
+            a = Console.ReadKey().KeyChar;
+            Console.Write("\n");
+            Console.WriteLine("By String: " + DivideString(line, a));
+            Console.WriteLine("By Regex: " + DivideStringReg(line, a));
+            Console.ReadKey();
+        }
+    }
+}
