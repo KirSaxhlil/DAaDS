@@ -26,7 +26,9 @@ namespace ConsoleApp1
         {
             string line;
             char a;
+            Console.Write("Введите строку: ");
             line = Console.ReadLine();
+            Console.Write("Введите символ: ");
             a = Console.ReadKey().KeyChar;
             Console.Write("\n");
             Console.WriteLine("By String: " + DivideString(line, a));
