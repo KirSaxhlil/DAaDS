@@ -13,26 +13,23 @@ namespace ConsoleApp1
             int q_pos = 0, x = -1, y = 30, t = 0;
             int[] array = new int[30];
             Random rand = new Random();
-            for(int i = 0; i < 30; i++)
+            for (int i = 0; i < 30; i++)
             {
-                array[i] = -50 + rand.Next(101);
+                array[i] = rand.Next(-50, 51);
             }
-            foreach(int i in array)
-            {
-                Console.Write("{0} ", i);
-            }
-            Console.WriteLine();
             foreach (int i in array)
             {
+                Console.Write("{0} ", i);
                 if (i > 0) q_pos++;
             }
-            for(int i = 0; i < q_pos/2; i++)
+            Console.WriteLine();
+            for (int i = 0; i < q_pos / 2; i++)
             {
-                for(int j = x+1; j < 30; j++)
+                for (int j = x + 1; j < 30; j++)
                 {
-                    if (array[j] > 0) { x = j; break;}
+                    if (array[j] > 0) { x = j; break; }
                 }
-                for(int j = y-1; j > 0; j--)
+                for (int j = y - 1; j > 0; j--)
                 {
                     if (array[j] > 0) { y = j; break; }
                 }
@@ -40,7 +37,7 @@ namespace ConsoleApp1
                 array[x] = array[y];
                 array[y] = t;
             }
-            foreach(int i in array)
+            foreach (int i in array)
             {
                 Console.Write("{0} ", i);
             }
