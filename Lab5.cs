@@ -26,13 +26,16 @@ namespace ConsoleApp1
         {
             string line;
             char a;
+            int x, y;
             Console.Write("Введите строку: ");
             line = Console.ReadLine();
             Console.Write("Введите символ: ");
             a = Console.ReadKey().KeyChar;
             Console.Write("\n");
-            Console.WriteLine("By String: " + DivideString(line, a));
-            Console.WriteLine("By Regex: " + DivideStringReg(line, a));
+            x = DivideString(line, a);
+            y = DivideStringReg(line, a);
+            Console.WriteLine("By String: " + x);
+            Console.WriteLine("By Regex: " + y);
             Console.ReadKey();
         }
     }
