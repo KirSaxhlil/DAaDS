@@ -11,15 +11,27 @@ namespace ConsoleApp1
     {
         static int DivideString(String line, char symb)
         {
-            if (line.IndexOf(symb) != -1)
-                return line.IndexOf(symb);
-            else return 0;
+            int i;
+                i = line.IndexOf(symb);
+            try
+            {
+                Console.WriteLine(line.Substring(0, i) + " " + line.Substring(i));
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                i = 0;
+                Console.WriteLine(line);
+            }
+            return i;
         }
 
         static int DivideStringReg(String line, char symb)
         {
+            int i;
             Regex reg = new Regex(@"" + symb);
-            return reg.Match(line).Index;
+            i = reg.Match(line).Index;
+            Console.WriteLine(line.Substring(0, i) + " " + line.Substring(i));
+            return i;
         }
 
         static void Main(string[] args)
