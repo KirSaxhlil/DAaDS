@@ -12,7 +12,7 @@ namespace ConsoleApp1
         public int number;
         public string name;
         public string profession;
-        public string rank;
+        public int rank;
         public int experience;
     }
 
@@ -29,7 +29,7 @@ namespace ConsoleApp1
             Console.Write("Введите название профессии: ");
             data.profession = Console.ReadLine();
             Console.Write("Введите разряд: ");
-            data.rank = Console.ReadLine();
+            data.rank = Convert.ToInt32(Console.ReadLine());
             Console.Write("Введите стаж работы: ");
             data.experience = Convert.ToInt32(Console.ReadLine());
             return data;
@@ -37,17 +37,62 @@ namespace ConsoleApp1
 
         static void SaveData(PData s, StreamWriter fs)
         {
-            fs.WriteLine(data.number + " ");
+            fs.WriteLine(s.number + "\t" + s.name + "\t" + s.profession + "\t" + s.rank + "\t" + s.experience);
+        }
+
+        static void UnitTest(PData s, string source_file_name)
+        {
+            StreamWriter output = new StreamWriter("test.log");
+            string dataS = s.number + "\t" + s.name + "\t" + s.profession + "\t" + s.rank + "\t" + s.experience;
+            string dataF = File.ReadAllLines(source_file_name).Last();
+            if (dataS == dataF) output.Write("Записи совпали. ");
+            else output.Write("Записи не совпали. ");
+            output.Write("Запись PData: {0}; Запись в файле: {1}\n", dataS, dataF);
+            output.Close();
         }
 
         static void Main(string[] args)
         {
             PData data = new PData();
             string filename;
-            filename = Console.ReadLine();
-            File.Create(filename);
-            StreamWriter input = new StreamWriter(filename);
-
+            filename = Console.ReadLine() + ".txt";
+            StreamWriter output = null;
+            try
+            {
+                output = new StreamWriter(filename);
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine("Ошибка: недопустимое имя файла.");
+            }
+            catch (PathTooLongException)
+            {
+                Console.WriteLine("Ошибка: слишком длинное имя файла.");
+            }
+            do
+            {
+                data = InputData();
+                try
+                {
+                    SaveData(data, output);
+                }
+                catch (FileNotFoundException)
+                {
+                    Console.WriteLine("Ошибка: файл не существует.");
+                }
+            } while (Console.ReadKey(true).KeyChar == '+');
+            try
+            {
+                output.Close();
+                Console.WriteLine("Файл сохранен в: " + Path.GetFullPath(filename));
+                Console.WriteLine("Записей в файле: " + File.ReadAllLines(filename).Length);
+                UnitTest(data, filename);
+            }
+            catch (System.NullReferenceException)
+            {
+                Console.WriteLine("Ошибка: файл не существует.");
+            }
+            Console.ReadKey();
         }
     }
 }
