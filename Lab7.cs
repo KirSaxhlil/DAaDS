@@ -64,10 +64,12 @@ namespace ConsoleApp1
             catch (ArgumentException)
             {
                 Console.WriteLine("Ошибка: недопустимое имя файла.");
+                return;
             }
             catch (PathTooLongException)
             {
                 Console.WriteLine("Ошибка: слишком длинное имя файла.");
+                return;
             }
             do
             {
@@ -79,6 +81,7 @@ namespace ConsoleApp1
                 catch (FileNotFoundException)
                 {
                     Console.WriteLine("Ошибка: файл не существует.");
+                    return;
                 }
             } while (Console.ReadKey(true).KeyChar == '+');
             try
