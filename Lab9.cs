@@ -8,8 +8,14 @@ namespace ConsoleApp1
 {
     class Array
     {
-        int n;
+        protected int n;
         int[] array;
+
+        public int this[int index]
+        {
+            get { return array[index]; }
+            set { array[index] = value; }
+        }
 
         public Array()
         {
@@ -79,12 +85,25 @@ namespace ConsoleApp1
             }
         }
 
-        public void Print()
+        public virtual void Print()
         {
             Console.WriteLine();
             foreach (int i in array)
             {
                 Console.Write("{0} ", i);
+            }
+        }
+
+        public int Min
+        {
+            get
+            {
+                int min = array[0];
+                for(int i = 1; i < n; i++)
+                {
+                    if (min < array[i]) min = array[i];
+                }
+                return min;
             }
         }
 
@@ -128,8 +147,9 @@ namespace ConsoleApp1
         public Matrix()
         {
             h = 10;
+            n = 10;
             matrix = new Array[h];
-            for(int i = 0; i < h; i++)
+            for (int i = 0; i < h; i++)
             {
                 matrix[i] = new Array();
             }
@@ -138,10 +158,65 @@ namespace ConsoleApp1
         public Matrix(int h, int n, int min, int max)
         {
             this.h = h;
+            this.n = n;
             matrix = new Array[h];
-            for(int i = 0; i < h; i++)
+            for (int i = 0; i < h; i++)
             {
                 matrix[i] = new Array(n, min, max);
+            }
+        }
+
+        public void Print_M()
+        {
+            for (int i = 0; i < h; i++)
+            {
+                matrix[i].Print();
+            }
+        }
+
+        public int P
+        {
+            get {
+                int sum = 0;
+                for (int i = 0; i < h; i++)
+                {
+                    for (int j = 0; j < n; j++)
+                    {
+                        sum += matrix[i][j] * (int)Math.Pow((-1), i); // pizda ubrat nado
+                    }
+                }
+                return sum;
+            }
+        }
+
+        
+        public static Matrix operator +(Matrix a, int i)
+        {
+            int min = a.matrix[i].Min;
+            for(int j = 0; j < a.n; j++)
+            {
+                a.matrix[i][j] += min;
+            }
+            return a;
+        }
+
+        public void Sort()
+        {
+            for(int i = 0; i < h; i++)
+            {
+                for(int j = 1; j < n; j++)
+                {
+                    for(int k = j; k >= 0 ; k--)
+                    {
+                        if (matrix[i][k] > matrix[i][j]) continue;
+                        else if(k + 1 < j)
+                        {
+                            int temp = matrix[i][j];
+                            matrix[i][j] = matrix[i][k + 1];
+                            matrix[i][k + 1] = temp;
+                        }
+                    }
+                }
             }
         }
     }
@@ -149,27 +224,11 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Array ar0 = new Array();
-            ar0.Print();
+            Matrix m = new Matrix(10, 10, -10, 10);
+            m.Print_M();
+            m.Sort();
             Console.WriteLine();
-            Array ar1 = new Array(Convert.ToInt32(Console.ReadLine()), -10, 10);
-            ar1.Print();
-            Console.WriteLine();
-            Array arN = new Array(ar1);
-            arN.Print();
-            Console.WriteLine();
-            ar1.Edit(2, 4653);
-            ar1.Edit(5, 75);
-            ar1.Print();
-            Console.WriteLine();
-            arN.Process();
-            arN.Print();
-            Console.WriteLine();
-            Console.ReadKey();
-            ar0 = null;
-            ar1 = null;
-            arN = null;
-            GC.Collect();
+            m.Print_M();
             Console.ReadKey();
         }
     }
