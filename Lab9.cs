@@ -28,11 +28,11 @@ namespace ConsoleApp1
             Console.WriteLine("Конструктор выполнен.");
         }
 
-        public Array(int n, int min, int max)
+        public Array(int n, int min, int max, int seed)
         {
             this.n = n;
             array = new int[n];
-            Random rnd = new Random();
+            Random rnd = new Random(seed);
             for (int i = 0; i < n; i++)
             {
                 array[i] = rnd.Next(min, max);
@@ -99,9 +99,9 @@ namespace ConsoleApp1
             get
             {
                 int min = array[0];
-                for(int i = 1; i < n; i++)
+                for (int i = 1; i < n; i++)
                 {
-                    if (min < array[i]) min = array[i];
+                    if (min > array[i]) min = array[i];
                 }
                 return min;
             }
@@ -144,6 +144,10 @@ namespace ConsoleApp1
         int h;
         Array[] matrix;
 
+        public int H
+        {
+            get { return h; }
+        }
         public Matrix()
         {
             h = 10;
@@ -162,7 +166,7 @@ namespace ConsoleApp1
             matrix = new Array[h];
             for (int i = 0; i < h; i++)
             {
-                matrix[i] = new Array(n, min, max);
+                matrix[i] = new Array(n, min, max, (int)DateTime.Now.Ticks+i);
             }
         }
 
@@ -176,7 +180,8 @@ namespace ConsoleApp1
 
         public int P
         {
-            get {
+            get
+            {
                 int sum = 0;
                 for (int i = 0; i < h; i++)
                 {
@@ -189,32 +194,33 @@ namespace ConsoleApp1
             }
         }
 
-        
+
         public static Matrix operator +(Matrix a, int i)
         {
             int min = a.matrix[i].Min;
-            for(int j = 0; j < a.n; j++)
+            for (int j = 0; j < a.n; j++)
             {
-                a.matrix[i][j] += min;
+                if(min > 0)
+                    a.matrix[i][j] += min;
             }
             return a;
         }
 
         public void Sort()
         {
-            for(int i = 0; i < h; i++)
+            for (int i = 0; i < h; i++)
             {
-                for(int j = 1; j < n; j++)
+                for (int j = 1; j < n; j++)
                 {
-                    for(int k = j; k >= 0 ; k--)
+                    for (int k = j; k >= 1; k--)
                     {
-                        if (matrix[i][k] > matrix[i][j]) continue;
-                        else if(k + 1 < j)
+                        if (matrix[i][k] < matrix[i][k-1])
                         {
-                            int temp = matrix[i][j];
-                            matrix[i][j] = matrix[i][k + 1];
-                            matrix[i][k + 1] = temp;
+                            int temp = matrix[i][k];
+                            matrix[i][k] = matrix[i][k - 1];
+                            matrix[i][k - 1] = temp;
                         }
+                        else break;
                     }
                 }
             }
@@ -224,9 +230,12 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Matrix m = new Matrix(10, 10, -10, 10);
+            Matrix m = new Matrix(10, 10, 0, 2);
             m.Print_M();
-            m.Sort();
+            for(int i = 0; i < m.H; i++)
+            {
+                m+=i;
+            }
             Console.WriteLine();
             m.Print_M();
             Console.ReadKey();
