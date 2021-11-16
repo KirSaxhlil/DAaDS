@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace Lab8
 {
     class Array
     {
-        int n;
-        int[] array;
+        private int n;
+        private int[] array;
 
         public Array()
         {
-            n = 100;
+            n = 30;
             array = new int[n];
             for (int i = 0; i < n; i++)
             {
@@ -53,7 +53,14 @@ namespace ConsoleApp1
 
         public void Edit(int i, int value)
         {
-            array[i] = value;
+            try
+            {
+                array[i] = value;
+            }
+            catch(IndexOutOfRangeException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public void Process()
@@ -65,7 +72,7 @@ namespace ConsoleApp1
             }
             for (int i = 0; i < q_pos / 2; i++)
             {
-                for (int j = x + 1; j < 30; j++)
+                for (int j = x + 1; j < n; j++)
                 {
                     if (array[j] > 0) { x = j; break; }
                 }
@@ -81,42 +88,11 @@ namespace ConsoleApp1
 
         public void Print()
         {
-            Console.WriteLine();
             foreach (int i in array)
             {
                 Console.Write("{0} ", i);
             }
-        }
-
-        bool Correct()
-        {
-            bool res = true;
-            for (int i = 1; i < n; i++)
-            {
-                if (array[i] < array[i - 1]) res = false;
-            }
-            return res;
-        }
-
-        void Shuffle()
-        {
-            Random rnd = new Random();
-            int i, j, t;
-            for (i = 0; i < n; i++)
-            {
-                j = rnd.Next(0, n);
-                t = array[i];
-                array[i] = array[j];
-                array[j] = t;
-            }
-        }
-
-        public void Bogosort()
-        {
-            while (!Correct())
-            {
-                Shuffle();
-            }
+            Console.WriteLine();
         }
     }
 
@@ -125,27 +101,41 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             Array ar0 = new Array();
+            Console.WriteLine("Массив ar0 с заданной длиной с нулевыми элементами:");
             ar0.Print();
             Console.WriteLine();
-            Array ar1 = new Array(Convert.ToInt32(Console.ReadLine()), -10, 10);
+            Array ar1;
+            try
+            {
+                ar1 = new Array(Convert.ToInt32(Console.ReadLine()), -10, 10);
+            } catch (OverflowException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadKey();
+                ar0 = null;
+                ar1 = null;
+                return;
+            }
+            Console.WriteLine("Массив ar1 с длиной, вводимой с клавиатуры и случайными числами в заданном диапазоне:");
             ar1.Print();
             Console.WriteLine();
             Array arN = new Array(ar1);
+            Console.WriteLine("Копирование массива ar1 в новый массив arN:");
             arN.Print();
             Console.WriteLine();
-            ar1.Edit(2, 4653);
+            ar1.Edit(-5, 4653);
             ar1.Edit(5, 75);
+            Console.WriteLine("Модификация произвольных элементов массива ar1:");
             ar1.Print();
             Console.WriteLine();
             arN.Process();
+            Console.WriteLine("Обработка массива arN:");
             arN.Print();
             Console.WriteLine();
             Console.ReadKey();
             ar0 = null;
             ar1 = null;
             arN = null;
-            GC.Collect();
-            Console.ReadKey();
         }
     }
 }
