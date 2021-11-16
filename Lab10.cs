@@ -61,7 +61,7 @@ namespace Lab10
 
         public void Insert(PData item)
         {
-            if(IsEmpty())
+            if (IsEmpty())
             {
                 firstNode = lastNode = new ListNode(item);
             }
@@ -87,7 +87,7 @@ namespace Lab10
         public void Edit(int n)
         {
             ListNode tmp = firstNode;
-            for(int i = 0; i <= n; i++)
+            for (int i = 0; i <= n; i++)
             {
                 if (tmp != null)
                 {
@@ -101,14 +101,14 @@ namespace Lab10
         public void Output()
         {
             ListNode tmp = firstNode;
-            while(tmp != null)
+            while (tmp != null)
             {
                 Console.WriteLine(tmp.Data.number + "\t" + tmp.Data.name + "\t" + tmp.Data.profession + "\t" + tmp.Data.rank + "\t" + tmp.Data.experience);
                 tmp = tmp.Next;
             }
         }
 
-        static PData InputData()
+        public static PData InputData()
         {
             PData data = new PData();
             Console.Clear();
@@ -130,15 +130,35 @@ namespace Lab10
         static void Main(string[] args)
         {
             List list = null;
-            string[] actions = {"Создать список", "Добавить запись в список", "Удалить запись из списка", "Изменить запись в списке", "Выйти в Windows" };
+            int choice = 0;
+            bool work = true;
+            string[] actions = { "Создать список", "Добавить запись в список", "Удалить запись из списка", "Изменить запись в списке", "Выйти в Windows" };
             do
             {
                 Console.WriteLine("Введите одно из следующих действий: ");
-                for(int i = 0; i < (list == null?2:5);i++)
+                for (int i = 0; i < (list == null ? 2 : 5); i++)
                 {
-                    Console.WriteLine((i+1) + " - " + actions[(list == null && i == 1?4:i)]+".");
+                    Console.WriteLine((i + 1) + " - " + actions[(list == null && i == 1 ? 4 : i)] + ".");
                 }
-            } while (true);
+                Console.WriteLine(work);
+                choice = int.Parse(Console.ReadKey().KeyChar.ToString());
+                Console.WriteLine(choice);
+                switch (choice)
+                {
+                    case 1: list = new List(); break;
+                    case 2 when list == null: work = false; break;
+                    case 2 when list != null: list.Insert(List.InputData()); break;
+
+                    case 3 when list != null: list.Remove(); break;
+                    case 4 when list != null:
+                        {
+                            Console.WriteLine("Введите номер элемента: ");
+                            list.Edit(Convert.ToInt32(Console.ReadLine()));
+                            break;
+                        }
+                    case 5 when list != null: work = false; break;
+                }
+            } while (work);
         }
     }
 }
