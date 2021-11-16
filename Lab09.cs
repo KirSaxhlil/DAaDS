@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp1
+namespace Lab9
 {
     class Array
     {
         protected int n;
-        int[] array;
+        private int[] array;
 
         public int this[int index]
         {
@@ -19,13 +19,12 @@ namespace ConsoleApp1
 
         public Array()
         {
-            n = 100;
+            n = 10;
             array = new int[n];
             for (int i = 0; i < n; i++)
             {
                 array[i] = 0;
             }
-            Console.WriteLine("Конструктор выполнен.");
         }
 
         public Array(int n, int min, int max, int seed)
@@ -37,7 +36,6 @@ namespace ConsoleApp1
             {
                 array[i] = rnd.Next(min, max);
             }
-            Console.WriteLine("Конструктор выполнен.");
         }
 
         public Array(Array array)
@@ -48,18 +46,23 @@ namespace ConsoleApp1
             {
                 this.array[i] = array.array[i];
             }
-            Console.WriteLine("Конструктор выполнен.");
         }
 
         ~Array()
         {
             array = null;
-            Console.WriteLine("Деструктор выполнен.");
         }
 
         public void Edit(int i, int value)
         {
-            array[i] = value;
+            try
+            {
+                array[i] = value;
+            }
+            catch(IndexOutOfRangeException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         public void Process()
@@ -85,13 +88,13 @@ namespace ConsoleApp1
             }
         }
 
-        public virtual void Print()
+        public void Print()
         {
-            Console.WriteLine();
             foreach (int i in array)
             {
-                Console.Write("{0} ", i);
+                Console.Write("{0,5} ", i);
             }
+            Console.WriteLine();
         }
 
         public int Min
@@ -104,37 +107,6 @@ namespace ConsoleApp1
                     if (min > array[i]) min = array[i];
                 }
                 return min;
-            }
-        }
-
-        bool Correct()
-        {
-            bool res = true;
-            for (int i = 1; i < n; i++)
-            {
-                if (array[i] < array[i - 1]) res = false;
-            }
-            return res;
-        }
-
-        void Shuffle()
-        {
-            Random rnd = new Random();
-            int i, j, t;
-            for (i = 0; i < n; i++)
-            {
-                j = rnd.Next(0, n);
-                t = array[i];
-                array[i] = array[j];
-                array[j] = t;
-            }
-        }
-
-        public void Bogosort()
-        {
-            while (!Correct())
-            {
-                Shuffle();
             }
         }
     }
@@ -150,13 +122,14 @@ namespace ConsoleApp1
         }
         public Matrix()
         {
-            h = 10;
+            h = 5;
             n = 10;
             matrix = new Array[h];
             for (int i = 0; i < h; i++)
             {
                 matrix[i] = new Array();
             }
+            Console.WriteLine("Конструктор выполнен.");
         }
 
         public Matrix(int h, int n, int min, int max)
@@ -166,8 +139,9 @@ namespace ConsoleApp1
             matrix = new Array[h];
             for (int i = 0; i < h; i++)
             {
-                matrix[i] = new Array(n, min, max, (int)DateTime.Now.Ticks+i);
+                matrix[i] = new Array(n, min, max, (int)DateTime.Now.Ticks + i);
             }
+            Console.WriteLine("Конструктор выполнен.");
         }
 
         public void Print_M()
@@ -187,7 +161,7 @@ namespace ConsoleApp1
                 {
                     for (int j = 0; j < n; j++)
                     {
-                        sum += matrix[i][j] * (int)Math.Pow((-1), i); // pizda ubrat nado
+                        sum += matrix[i][j] * (int)Math.Pow((-1), i);
                     }
                 }
                 return sum;
@@ -197,10 +171,18 @@ namespace ConsoleApp1
 
         public static Matrix operator +(Matrix a, int i)
         {
-            int min = a.matrix[i].Min;
+            int min = 0;
+            try
+            {
+                min = a.matrix[i].Min;
+            } catch(IndexOutOfRangeException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return a;
+            }
             for (int j = 0; j < a.n; j++)
             {
-                if(min > 0)
+                if (min > 0)
                     a.matrix[i][j] += min;
             }
             return a;
@@ -208,17 +190,17 @@ namespace ConsoleApp1
 
         public void Sort()
         {
-            for (int i = 0; i < h; i++)
+            for (int i = 0; i < n; i++)
             {
-                for (int j = 1; j < n; j++)
+                for (int j = 1; j < h; j++)
                 {
                     for (int k = j; k >= 1; k--)
                     {
-                        if (matrix[i][k] < matrix[i][k-1])
+                        if (matrix[k][i] < matrix[k - 1][i])
                         {
-                            int temp = matrix[i][k];
-                            matrix[i][k] = matrix[i][k - 1];
-                            matrix[i][k - 1] = temp;
+                            int temp = matrix[k][i];
+                            matrix[k][i] = matrix[k - 1][i];
+                            matrix[k - 1][i] = temp;
                         }
                         else break;
                     }
@@ -230,14 +212,34 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            Matrix m = new Matrix(10, 10, 0, 2);
-            m.Print_M();
-            for(int i = 0; i < m.H; i++)
+            Matrix T0 = new Matrix();
+            Console.WriteLine("Нулевая матрица фиксированного размера:");
+            T0.Print_M();
+            Matrix T;
+            try
             {
-                m+=i;
+                T = new Matrix(5, 14, -10, 5);
             }
-            Console.WriteLine();
-            m.Print_M();
+            catch (OverflowException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadKey();
+                T0 = null;
+                T = null;
+                return;
+            }
+            Console.WriteLine("Матрица случайных чисел:");
+            T.Print_M();
+            Console.WriteLine("\nПараметр Р: "+T.P);
+            for (int i = 0; i < T.H; i++)
+            {
+                T += i;
+            }
+            Console.WriteLine("Матрица случайных чисел после заданного преобразования:");
+            T.Print_M();
+            T.Sort();
+            Console.WriteLine("Матрица случайных чисел после сортировки:");
+            T.Print_M();
             Console.ReadKey();
         }
     }
