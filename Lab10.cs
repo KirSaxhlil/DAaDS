@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -87,7 +88,7 @@ namespace Lab10
         public void Edit(int n)
         {
             ListNode tmp = firstNode;
-            for (int i = 0; i <= n; i++)
+            for (int i = 0; i < n-1; i++)
             {
                 if (tmp != null)
                 {
@@ -95,7 +96,8 @@ namespace Lab10
                 }
                 else return;
             }
-            tmp.Data = InputData();
+            if(tmp != null)
+                tmp.Data = InputData();
         }
 
         public void Output()
@@ -127,18 +129,36 @@ namespace Lab10
     }
     class Program
     {
+        static void LoadFile(ref List list)
+        {
+            StreamReader input = new StreamReader("input.txt");
+            list = new List();
+            while (!input.EndOfStream)
+            {
+                PData data = new PData();
+                string[] line = new string[5];
+                line = input.ReadLine().Split(' ');
+                data.number = int.Parse(line[0]);
+                data.name = line[1];
+                data.profession = line[2];
+                data.rank = int.Parse(line[3]);
+                data.experience = int.Parse(line[4]);
+                list.Insert(data);
+            }
+        }
+
         static void Main(string[] args)
         {
             List list = null;
             int choice = 0;
             bool work = true;
-            string[] actions = { "Создать список", "Добавить запись в список", "Удалить запись из списка", "Изменить запись в списке", "Выйти в Windows" };
+            string[] actions = { "Создать список", "Загрузить список из файла", "Добавить запись в список", "Удалить запись из списка", "Изменить запись в списке", "Вывести список", "Выйти в Windows" };
             do
             {
                 Console.WriteLine("Введите одно из следующих действий: ");
-                for (int i = 0; i < (list == null ? 2 : 5); i++)
+                for (int i = 0; i < (list == null ? 3 : actions.Length); i++)
                 {
-                    Console.WriteLine((i + 1) + " - " + actions[(list == null && i == 1 ? 4 : i)] + ".");
+                    Console.WriteLine((i + 1) + " - " + actions[(list == null && (i == 2) ? actions.Length-1 : i)] + ".");
                 }
                 Console.WriteLine(work);
                 choice = int.Parse(Console.ReadKey().KeyChar.ToString());
@@ -146,17 +166,19 @@ namespace Lab10
                 switch (choice)
                 {
                     case 1: list = new List(); break;
-                    case 2 when list == null: work = false; break;
-                    case 2 when list != null: list.Insert(List.InputData()); break;
+                    case 2: LoadFile(ref list); break;
+                    case 3 when list == null: work = false; break;
+                    case 3 when list != null: list.Insert(List.InputData()); break;
 
-                    case 3 when list != null: list.Remove(); break;
-                    case 4 when list != null:
+                    case 4 when list != null: list.Remove(); break;
+                    case 5 when list != null:
                         {
                             Console.WriteLine("Введите номер элемента: ");
                             list.Edit(Convert.ToInt32(Console.ReadLine()));
                             break;
                         }
-                    case 5 when list != null: work = false; break;
+                    case 6: list.Output(); break;
+                    case 7 when list != null: work = false; break;
                 }
             } while (work);
         }
