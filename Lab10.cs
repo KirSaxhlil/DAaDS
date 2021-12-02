@@ -88,7 +88,7 @@ namespace Lab10
         public void Edit(int n)
         {
             ListNode tmp = firstNode;
-            for (int i = 0; i < n-1; i++)
+            for (int i = 0; i < n - 1; i++)
             {
                 if (tmp != null)
                 {
@@ -96,7 +96,7 @@ namespace Lab10
                 }
                 else return;
             }
-            if(tmp != null)
+            if (tmp != null)
                 tmp.Data = InputData();
         }
 
@@ -131,7 +131,14 @@ namespace Lab10
     {
         static void LoadFile(ref List list)
         {
-            StreamReader input = new StreamReader("input.txt");
+            StreamReader input;
+            try { input = new StreamReader("input.txt"); }
+            catch(FileNotFoundException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadKey();
+                return;
+            }
             list = new List();
             while (!input.EndOfStream)
             {
@@ -155,32 +162,67 @@ namespace Lab10
             string[] actions = { "Создать список", "Загрузить список из файла", "Добавить запись в список", "Удалить запись из списка", "Изменить запись в списке", "Вывести список", "Выйти в Windows" };
             do
             {
+                Console.Clear();
                 Console.WriteLine("Введите одно из следующих действий: ");
                 for (int i = 0; i < (list == null ? 3 : actions.Length); i++)
                 {
-                    Console.WriteLine((i + 1) + " - " + actions[(list == null && (i == 2) ? actions.Length-1 : i)] + ".");
+                    Console.WriteLine((i + 1) + " - " + actions[(list == null && (i == 2) ? actions.Length - 1 : i)] + ".");
                 }
-                Console.WriteLine(work);
-                choice = int.Parse(Console.ReadKey().KeyChar.ToString());
-                Console.WriteLine(choice);
+                try { choice = int.Parse(Console.ReadKey(true).KeyChar.ToString()); }
+                catch (FormatException ex)
+                {
+                    choice = 0;
+                    Console.WriteLine(ex.Message);
+                    Console.ReadKey();
+                }
                 switch (choice)
                 {
                     case 1: list = new List(); break;
                     case 2: LoadFile(ref list); break;
-                    case 3 when list == null: work = false; break;
-                    case 3 when list != null: list.Insert(List.InputData()); break;
-
+                    case 3 when list == null: Quit(ref work); break;
+                    case 3 when list != null: {
+                            try { list.Insert(List.InputData()); }
+                            catch (FormatException ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                                Console.ReadKey();
+                            }
+                            break; 
+                        }
                     case 4 when list != null: list.Remove(); break;
                     case 5 when list != null:
                         {
+                            Console.Clear();
                             Console.WriteLine("Введите номер элемента: ");
-                            list.Edit(Convert.ToInt32(Console.ReadLine()));
+                            try { list.Edit(Convert.ToInt32(Console.ReadLine())); }
+                            catch(FormatException ex) {
+                                Console.WriteLine(ex.Message);
+                                Console.ReadKey();
+                            }
                             break;
                         }
-                    case 6: list.Output(); break;
-                    case 7 when list != null: work = false; break;
+                    case 6 when list != null: {
+                            Console.Clear();
+                            Console.WriteLine("Содержимое списка:");
+                            list.Output();
+                            Console.ReadKey();
+                            break;
+                        }
+                    case 7 when list != null: {
+                            Quit(ref work);
+                            break;
+                        }
                 }
             } while (work);
+        }
+
+        static void Quit(ref bool work)
+        {
+            Console.Clear();
+            Console.WriteLine("Вы действительно хотите выйти? (y/n)");
+            char c = Console.ReadKey().KeyChar;
+            if (c == 'y' || c == 'н')
+                work = false;
         }
     }
 }
