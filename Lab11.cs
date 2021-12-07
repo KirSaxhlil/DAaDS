@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lab11
 {
-    abstract class Array
+    public abstract class Array
     {
         protected int N;
         protected int[] Arr;
@@ -16,7 +16,15 @@ namespace Lab11
             Random r = new Random();
             for (int i = 0; i < N; i++)
             {
-                Arr[i] = r.Next(min, max);
+                try
+                {
+                    Arr[i] = r.Next(min, max);
+                }
+                catch(ArgumentOutOfRangeException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    Arr[i] = min;
+                }
             }
         }
 
@@ -25,13 +33,23 @@ namespace Lab11
         public abstract void Processing();
     }
 
-    class Vector : Array
+    public class Vector : Array
     {
+        public Vector()
+        {
+            N = 30;
+            Arr = new int[N];
+            for (int i = 0; i < N; i++)
+            {
+                Arr[i] = i-15;
+            }
+        }
+
         public Vector(int n, int min, int max)
         {
             N = n;
             Arr = new int[N];
-            Init(min, max); //-50, 51
+            Init(min, max);
         }
 
         public override int Calc()
@@ -47,6 +65,7 @@ namespace Lab11
         public override void PrintArray()
         {
             for (int i = 0; i < N; i++) Console.Write(Arr[i] + "\t");
+            Console.WriteLine();
         }
 
         public override void Processing()
@@ -69,10 +88,21 @@ namespace Lab11
         }
     }
 
-    class Matrix : Array
+    public class Matrix : Array
     {
         protected int W;
         protected int M;
+        public Matrix()
+        {
+            W = 3;
+            M = 5;
+            N = W * M;
+            Arr = new int[N];
+            for (int i = 0; i < N; i++)
+            {
+                Arr[i] = i-6;
+            }
+        }
 
         public Matrix(int w, int m, int min, int max)
         {
@@ -80,7 +110,7 @@ namespace Lab11
             M = m;
             N = W * M;
             Arr = new int[N];
-            Init(min, max); //-10, 6
+            Init(min, max);
         }
 
         public override int Calc()
@@ -99,22 +129,30 @@ namespace Lab11
             {
                 Console.Write(Arr[i] + (i % M == M - 1 ? "\n" : "\t"));
             }
+            Console.WriteLine();
         }
 
         public override void Processing()
         {
-            int min;
-            for (int i = 0; i < W; i++)
+            try
             {
-                min = Arr[i * M];
-                for (int j = 0; j < M; j++)
+                int min;
+                for (int i = 0; i < W; i++)
                 {
-                    if (Arr[i * M + j] < min) min = Arr[i * M + j];
+                    min = Arr[i * M];
+                    for (int j = 0; j < M; j++)
+                    {
+                        if (Arr[i * M + j] < min) min = Arr[i * M + j];
+                    }
+                    if (min > 0)
+                    {
+                        for (int j = 0; j < M; j++) Arr[i * M + j] += min;
+                    }
                 }
-                if (min > 0)
-                {
-                    for (int j = 0; j < M; j++) Arr[i * M + j] += min;
-                }
+            }
+            catch(IndexOutOfRangeException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
     }
@@ -125,18 +163,37 @@ namespace Lab11
         {
             int N, W, min, max;
             Console.Write("Длина вектора: ");
-            N = int.Parse(Console.ReadLine());
-            Console.Write("Минимум генерации: ");
-            min = int.Parse(Console.ReadLine());
-            Console.Write("Максимум генерации: ");
-            max = int.Parse(Console.ReadLine());
-            Vector V = new Vector(N, min, max);
+            try
+            {
+                N = int.Parse(Console.ReadLine());
+                Console.Write("Минимум генерации: ");
+                min = int.Parse(Console.ReadLine());
+                Console.Write("Максимум генерации: ");
+                max = int.Parse(Console.ReadLine());
+            } catch (FormatException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
+                return;
+            }
+            Vector V;
+            try
+            {
+                V = new Vector(N, min, max);
+            }
+            catch(OverflowException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
+                return;
+            }
             Console.WriteLine("Исходный вектор:");
             V.PrintArray();
             V.Processing();
             Console.WriteLine("Обработанный вектор:");
             V.PrintArray();
             Console.Write("Высота матрицы: ");
+            try {
             W = int.Parse(Console.ReadLine());
             Console.Write("Длина строки матрицы: ");
             N = int.Parse(Console.ReadLine());
@@ -144,7 +201,23 @@ namespace Lab11
             min = int.Parse(Console.ReadLine());
             Console.Write("Максимум генерации: ");
             max = int.Parse(Console.ReadLine());
-            Matrix M = new Matrix(W, N, min, max);
+            }
+            catch (FormatException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
+                return;
+            }
+            Matrix M;
+            try {
+                M = new Matrix(W, N, min, max);
+            }
+            catch (OverflowException ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.ReadLine();
+                return;
+            }
             Console.WriteLine("Исходная матрица:");
             M.PrintArray();
             Console.Write("Показатель: ");
@@ -152,6 +225,7 @@ namespace Lab11
             M.Processing();
             Console.WriteLine("Обработанная матрица:");
             M.PrintArray();
+            Console.ReadLine();
         }
     }
 }
