@@ -14,7 +14,7 @@ namespace Lab11
         public virtual void Init(int min, int max)
         {
             Random r = new Random();
-            for(int i = 0; i < N; i++)
+            for (int i = 0; i < N; i++)
             {
                 Arr[i] = r.Next(min, max);
             }
@@ -27,17 +27,17 @@ namespace Lab11
 
     class Vector : Array
     {
-        Vector()
+        public Vector(int n, int min, int max)
         {
-            N = 30;
+            N = n;
             Arr = new int[N];
-            Init(-50, 50);
+            Init(min, max); //-50, 51
         }
 
         public override int Calc()
         {
             int q = 0;
-            for(int i = 0; i < N; i++)
+            for (int i = 0; i < N; i++)
             {
                 if (Arr[i] > 0) q++;
             }
@@ -74,13 +74,13 @@ namespace Lab11
         protected int W;
         protected int M;
 
-        Matrix()
+        public Matrix(int w, int m, int min, int max)
         {
-            W = 5;
-            M = 14;
+            W = w;
+            M = m;
             N = W * M;
             Arr = new int[N];
-            Init(-10, 6);
+            Init(min, max); //-10, 6
         }
 
         public override int Calc()
@@ -88,14 +88,14 @@ namespace Lab11
             int sum = 0;
             for (int i = 0; i < N; i++)
             {
-                sum += Arr[i] * (int)Math.Pow((-1), i/M);
+                sum += Arr[i] * (int)Math.Pow((-1), i / M);
             }
             return sum;
         }
 
         public override void PrintArray()
         {
-            for(int i = 0; i < N; i++)
+            for (int i = 0; i < N; i++)
             {
                 Console.Write(Arr[i] + (i % M == M - 1 ? "\n" : "\t"));
             }
@@ -104,14 +104,14 @@ namespace Lab11
         public override void Processing()
         {
             int min;
-            for(int i = 0; i < W; i++)
+            for (int i = 0; i < W; i++)
             {
                 min = Arr[i * M];
-                for(int j = 0; j < M; j++)
+                for (int j = 0; j < M; j++)
                 {
                     if (Arr[i * M + j] < min) min = Arr[i * M + j];
                 }
-                if(min > 0)
+                if (min > 0)
                 {
                     for (int j = 0; j < M; j++) Arr[i * M + j] += min;
                 }
@@ -123,6 +123,35 @@ namespace Lab11
     {
         static void Main(string[] args)
         {
+            int N, W, min, max;
+            Console.Write("Длина вектора: ");
+            N = int.Parse(Console.ReadLine());
+            Console.Write("Минимум генерации: ");
+            min = int.Parse(Console.ReadLine());
+            Console.Write("Максимум генерации: ");
+            max = int.Parse(Console.ReadLine());
+            Vector V = new Vector(N, min, max);
+            Console.WriteLine("Исходный вектор:");
+            V.PrintArray();
+            V.Processing();
+            Console.WriteLine("Обработанный вектор:");
+            V.PrintArray();
+            Console.Write("Высота матрицы: ");
+            W = int.Parse(Console.ReadLine());
+            Console.Write("Длина строки матрицы: ");
+            N = int.Parse(Console.ReadLine());
+            Console.Write("Минимум генерации: ");
+            min = int.Parse(Console.ReadLine());
+            Console.Write("Максимум генерации: ");
+            max = int.Parse(Console.ReadLine());
+            Matrix M = new Matrix(W, N, min, max);
+            Console.WriteLine("Исходная матрица:");
+            M.PrintArray();
+            Console.Write("Показатель: ");
+            Console.WriteLine(M.Calc());
+            M.Processing();
+            Console.WriteLine("Обработанная матрица:");
+            M.PrintArray();
         }
     }
 }
