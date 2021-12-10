@@ -29,6 +29,11 @@ namespace Lab13
                 Console.WriteLine("{0} {1} {2} {3} {4}", list[i].name, list[i].code_size, list[i].lang, list[i].point, list[i].user_category);
             }
         }
+
+        public void SortBy()
+        {
+
+        }
     }
 
     abstract class CompProg
@@ -72,7 +77,34 @@ namespace Lab13
 
         public int Compare(AppliedProg obj1, AppliedProg obj2)
         {
+            if (obj1.code_size > obj2.code_size) return 1;
+            else if (obj1.code_size < obj2.code_size) return -1;
+            else return 0;
+        }
 
+        public int Compare_Name(AppliedProg obj1, AppliedProg obj2)
+        {
+            return obj1.name.CompareTo(obj2.name);
+        }
+
+        public int Compare_Code(AppliedProg obj1, AppliedProg obj2)
+        {
+            return obj1.code_size.CompareTo(obj2.code_size);
+        }
+
+        public int Compare_Lang(AppliedProg obj1, AppliedProg obj2)
+        {
+            return obj1.lang.CompareTo(obj2.lang);
+        }
+
+        public int Compare_Point(AppliedProg obj1, AppliedProg obj2)
+        {
+            return obj1.point.CompareTo(obj2.point);
+        }
+
+        public int Compare_Category(AppliedProg obj1, AppliedProg obj2)
+        {
+            return obj1.user_category.CompareTo(obj2.user_category);
         }
     }
     class Program
