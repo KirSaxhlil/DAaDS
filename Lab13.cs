@@ -8,7 +8,8 @@ namespace Lab13
 {
     class ProgLib
     {
-        List<AppliedProg> list = new List<AppliedProg>();
+        public List<AppliedProg> list = new List<AppliedProg>();
+        public delegate int del(AppliedProg prog1, AppliedProg prog2);
 
         public void Add(AppliedProg prog)
         {
@@ -30,9 +31,21 @@ namespace Lab13
             }
         }
 
-        public void SortBy()
+        public void SortBy(del delegat)
         {
-
+            AppliedProg tprog;
+            for(int i = 0; i<list.Count; i++)
+            {
+                for(int j = i+1; j <list.Count; j++)
+                {
+                    if(delegat(list[i], list[j]) == 1)
+                    {
+                        tprog = list[i];
+                        list[i] = list[j];
+                        list[j] = tprog;
+                    }
+                }
+            }
         }
     }
 
@@ -45,10 +58,19 @@ namespace Lab13
         public abstract void Edit();
     }
 
-    class AppliedProg : CompProg, IComparable, IComparer<AppliedProg>
+    class AppliedProg : CompProg, IComparable, IComparer<AppliedProg>, ICloneable
     {
         public string point;
         public string user_category;
+
+        public AppliedProg(string name, int code, string lang, string point, string category)
+        {
+            this.name = name;
+            this.code_size = code;
+            this.lang = lang;
+            this.point = point;
+            this.user_category = category;
+        }
 
         public override void Edit()
         {
@@ -63,6 +85,16 @@ namespace Lab13
                 case 4: point = Console.ReadLine(); break;
                 case 5: user_category = Console.ReadLine(); break;
             }
+        }
+
+        public object Clone()
+        {
+            return (AppliedProg)this.MemberwiseClone();
+        }
+
+        public object GClone()
+        {
+            return new AppliedProg(name, code_size, lang, point, user_category);
         }
 
         public int CompareTo(object b)
@@ -82,35 +114,62 @@ namespace Lab13
             else return 0;
         }
 
-        public int Compare_Name(AppliedProg obj1, AppliedProg obj2)
+        static public int Compare_Name(AppliedProg obj1, AppliedProg obj2)
         {
             return obj1.name.CompareTo(obj2.name);
         }
 
-        public int Compare_Code(AppliedProg obj1, AppliedProg obj2)
+        static public int Compare_Code(AppliedProg obj1, AppliedProg obj2)
         {
             return obj1.code_size.CompareTo(obj2.code_size);
         }
 
-        public int Compare_Lang(AppliedProg obj1, AppliedProg obj2)
+        static public int Compare_Lang(AppliedProg obj1, AppliedProg obj2)
         {
             return obj1.lang.CompareTo(obj2.lang);
         }
 
-        public int Compare_Point(AppliedProg obj1, AppliedProg obj2)
+        static public int Compare_Point(AppliedProg obj1, AppliedProg obj2)
         {
             return obj1.point.CompareTo(obj2.point);
         }
 
-        public int Compare_Category(AppliedProg obj1, AppliedProg obj2)
+        static public int Compare_Category(AppliedProg obj1, AppliedProg obj2)
         {
             return obj1.user_category.CompareTo(obj2.user_category);
         }
     }
     class Program
     {
+        public delegate string LongestName(List<AppliedProg> list);
+        static string Longest(List<AppliedProg> list)
+        {
+            string t = list[0].name;
+            foreach(AppliedProg i in list)
+            {
+                if (i.name.Length > t.Length) t = i.name;
+            }
+            return t;
+        }
         static void Main(string[] args)
         {
+            ProgLib list = new ProgLib();
+            list.Add(new AppliedProg("Name", 0, "lang", "point", "user"));
+            list.Add(new AppliedProg("Ubername", 4, "prolang", "antipoint", "superuser"));
+            list.Add(new AppliedProg("Cybername", 189, "underlang", "per-point", "megauser"));
+
+            list.Output();
+            list.SortBy(AppliedProg.Compare_Category);
+
+            Console.WriteLine();
+            list.Output();
+
+            List <AppliedProg> list2 = new List<AppliedProg>();
+            for (int i = 0; i < list.list.Count; i++) list2.Add(list.list[i]);
+            LongestName l = (List<AppliedProg> p) => Longest(p);
+            Console.WriteLine();
+            Console.WriteLine("Наидлиннейший name: " + l(list2));
+            Console.ReadKey();
         }
     }
 }
