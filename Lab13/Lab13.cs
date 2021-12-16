@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lab13
 {
-    class ProgLib
+    public class ProgLib
     {
         public List<AppliedProg> list = new List<AppliedProg>();
         public delegate int del(AppliedProg prog1, AppliedProg prog2);
@@ -34,11 +34,11 @@ namespace Lab13
         public void SortBy(del delegat)
         {
             AppliedProg tprog;
-            for(int i = 0; i<list.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
-                for(int j = i+1; j <list.Count; j++)
+                for (int j = i + 1; j < list.Count; j++)
                 {
-                    if(delegat(list[i], list[j]) == 1)
+                    if (delegat(list[i], list[j]) == 1)
                     {
                         tprog = list[i];
                         list[i] = list[j];
@@ -49,7 +49,7 @@ namespace Lab13
         }
     }
 
-    abstract class CompProg
+    public abstract class CompProg
     {
         public string name;
         public int code_size;
@@ -58,7 +58,7 @@ namespace Lab13
         public abstract void Edit();
     }
 
-    class AppliedProg : CompProg, IComparable, IComparer<AppliedProg>, ICloneable
+    public class AppliedProg : CompProg, IComparable, IComparer<AppliedProg>, ICloneable
     {
         public string point;
         public string user_category;
@@ -75,7 +75,12 @@ namespace Lab13
         public override void Edit()
         {
             Console.WriteLine("Выберите изменяемое поле:\n1) Название\n2) Объем кода\n3) Язык программирования\n4) Назначение\n5) Категория пользователей");
-            int choice = int.Parse(Console.ReadKey().KeyChar.ToString());
+            int choice = -1;
+            try { choice = int.Parse(Console.ReadKey().KeyChar.ToString()); }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             Console.WriteLine();
             switch (choice)
             {
@@ -104,7 +109,7 @@ namespace Lab13
             {
                 return this.code_size.CompareTo(a.code_size);
             }
-            else throw new NullReferenceException();
+            else throw new NullReferenceException("Невозможно сравнить эти 2 объекта!");
         }
 
         public int Compare(AppliedProg obj1, AppliedProg obj2)
@@ -145,7 +150,7 @@ namespace Lab13
         static string Longest(List<AppliedProg> list)
         {
             string t = list[0].name;
-            foreach(AppliedProg i in list)
+            foreach (AppliedProg i in list)
             {
                 if (i.name.Length > t.Length) t = i.name;
             }
@@ -153,23 +158,49 @@ namespace Lab13
         }
         static void Main(string[] args)
         {
-            ProgLib list = new ProgLib();
-            list.Add(new AppliedProg("Name", 0, "lang", "point", "user"));
-            list.Add(new AppliedProg("Ubername", 4, "prolang", "antipoint", "superuser"));
-            list.Add(new AppliedProg("Cybername", 189, "underlang", "per-point", "megauser"));
+            try
+            {
+                ProgLib list = new ProgLib();
+                list.Add(new AppliedProg("Name", 0, "lang", "point", "user"));
+                list.Add(new AppliedProg("Ubername", 4, "prolang", "antipoint", "superuser"));
+                list.Add(new AppliedProg("Cybername", 189, "underlang", "per-point", "megauser"));
+                list.Add((AppliedProg)list.list[1].Clone());
+                list.Add((AppliedProg)list.list[2].GClone());
 
-            list.Output();
-            list.SortBy(AppliedProg.Compare_Category);
+                Console.WriteLine("Исходный список:");
+                list.Output();
+                Console.WriteLine();
+                Console.WriteLine("Сортировка по name:");
+                list.SortBy(AppliedProg.Compare_Name);
+                list.Output();
+                Console.WriteLine();
+                Console.WriteLine("Сортировка по code_size:");
+                list.SortBy(AppliedProg.Compare_Code);
+                list.Output();
+                Console.WriteLine();
+                Console.WriteLine("Сортировка по lang:");
+                list.SortBy(AppliedProg.Compare_Lang);
+                list.Output();
+                Console.WriteLine();
+                Console.WriteLine("Сортировка по point:");
+                list.SortBy(AppliedProg.Compare_Point);
+                list.Output();
+                Console.WriteLine();
+                Console.WriteLine("Сортировка по user_category:");
+                list.SortBy(AppliedProg.Compare_Category);
+                list.Output();
+                Console.WriteLine();
 
-            Console.WriteLine();
-            list.Output();
-
-            List <AppliedProg> list2 = new List<AppliedProg>();
-            for (int i = 0; i < list.list.Count; i++) list2.Add(list.list[i]);
-            LongestName l = (List<AppliedProg> p) => Longest(p);
-            Console.WriteLine();
-            Console.WriteLine("Наидлиннейший name: " + l(list2));
-            Console.ReadKey();
+                List<AppliedProg> list2 = new List<AppliedProg>();
+                for (int i = 0; i < list.list.Count; i++) list2.Add(list.list[i]);
+                LongestName l = (List<AppliedProg> p) => Longest(p);
+                Console.WriteLine();
+                Console.WriteLine("Наидлиннейший name: " + l(list2));
+                Console.ReadKey();
+            } catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }
