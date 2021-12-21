@@ -25,7 +25,6 @@ namespace Lab16
         }
         public void DrawGraph()
         {
-            // Получим панель для рисования
             GraphPane pane = zedGraph.GraphPane;
             pane.XAxis.Cross = 0.0;
             pane.YAxis.Cross = 0.0;
@@ -37,15 +36,7 @@ namespace Lab16
             pane.XAxis.Title.IsVisible = false;
             pane.YAxis.Title.IsVisible = false;
             pane.Title.IsVisible = false;
-            // Изменим тест надписи по оси X
-            pane.XAxis.Title.Text = "x";
-            // Изменим текст по оси Y
-            pane.YAxis.Title.Text = "y";
-            // Изменим текст заголовка графика
-            pane.Title.Text = "График функции y = b*x^2-a*Lg(x)";
-            // Очистим список кривых на тот случай, если до этого сигналы уже были нарисованы
             pane.CurveList.Clear();
-            // Создадим список точек
             PointPairList list = new PointPairList();
             double xmin = 2;
             double xmax = 7;
@@ -55,12 +46,10 @@ namespace Lab16
             double[] xpmin = { xmin , xmin};
             double[] xpmax = { xmin , xmin};
 
-            // Заполняем список точек
             try
             {
                 for (double x = xmin; x <= xmax; x += 0.01)
                 {
-                    // добавим в список точку
                     double t = f(x, double.Parse(tb_A.Text), double.Parse(tb_B.Text));
                     list.Add(x, t);
                     if (t > ymax[1])
@@ -79,10 +68,6 @@ namespace Lab16
                 MessageBox.Show(ex.Message);
             }
 
-
-            // Создадим кривую с названием "Sinc",
-            // которая будет рисоваться голубым цветом (Color.Blue),
-            // Опорные точки выделяться не будут (SymbolType.None)
             pane.AddCurve("y = b*x^2-a*Lg(x)", list, Color.Blue, SymbolType.None);
             pane.AddCurve("", xpmin, ymin, Color.Red, SymbolType.None);
             pane.AddCurve("", xpmax, ymax, Color.Red, SymbolType.None);
@@ -92,13 +77,7 @@ namespace Lab16
             ymax[0] = ymax[1];
             pane.AddCurve("", xpmin, ymin, Color.Red, SymbolType.None);
             pane.AddCurve("", xpmax, ymax, Color.Red, SymbolType.None);
-
-            // Вызываем метод AxisChange (), чтобы обновить данные об осях.
-            // В противном случае на рисунке будет показана только часть графика,
-            // которая умещается в интервалы по осям, установленные по умолчанию
             zedGraph.AxisChange();
-
-            // Обновляем график
             zedGraph.Invalidate();
         }
 
